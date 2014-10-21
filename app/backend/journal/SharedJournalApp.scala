@@ -14,8 +14,8 @@ import akka.cluster.ClusterEvent.MemberUp
 import akka.actor.ActorIdentity
 import scala.Some
 import akka.actor.Identify
-import com.typesafe.config.ConfigFactory
-import scala.io.StdIn
+import backend.BaseApp
+import actors.Settings
 
 object SharedJournal {
 
@@ -30,42 +30,9 @@ object SharedJournal {
  * The shared journal is a single point of failure and must not be used in production.
  * This app must be running in order for persistence and cluster sharding to work.
  */
-object SharedJournalApp {
+object SharedJournalApp extends BaseApp {
 
-    def main(args: Array[String]): Unit = {
-        //improper / lazy checking - expecting port and cluster role.
-        val system = if (args.size < 2)
-            startSystem("0", "shared-journal")
-        else
-            startSystem(args(0), args(1))
-
-        initialize(system)
-        commandLoop(system)
-    }
-
-    def startSystem(port: String, role: String) = {
-        val portNr = Integer.parseInt(port)
-
-        // Override the port number configuration
-        val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + portNr).
-            withFallback(ConfigFactory.parseString(s"akka.cluster.roles=[$role]")).
-            withFallback(ConfigFactory.parseString("akka.loglevel=INFO")).
-            withFallback(ConfigFactory.load())
-
-        // Create an actor system hello!
-        ActorSystem("application", config)
-    }
-
-    def commandLoop(system: ActorSystem): Unit = {
-        val line: String = StdIn.readLine()
-        if (line.startsWith("s")) {
-            system.shutdown()
-        } else {
-            commandLoop(system)
-        }
-    }
-
-    def initialize(system: ActorSystem): Unit = {
+    override protected def initialize(system: ActorSystem, settings: Settings): Unit = {
         println(s"### SharedJournalApp initialize")
         val sharedJournal = system.actorOf(Props(new SharedLeveldbStore), SharedJournal.name)
         SharedLeveldbJournal.setStore(sharedJournal, system)
