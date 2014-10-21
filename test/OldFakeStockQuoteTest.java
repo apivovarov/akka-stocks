@@ -1,15 +1,15 @@
 import org.junit.Test;
-import utils.FakeStockQuote;
+import utils.OldFakeStockQuote;
 
 import java.util.Random;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class FakeStockQuoteTest {
+public class OldFakeStockQuoteTest {
 
     @Test
     public void fakeStockPriceShouldBePlusOrMinusFivePercentOfTheOldPrice() {
-        FakeStockQuote stockQuote = new FakeStockQuote();
+        OldFakeStockQuote stockQuote = new OldFakeStockQuote();
         Double origPrice = new Random().nextDouble();
         Double newPrice = stockQuote.newPrice(origPrice);
         assertThat(newPrice).isGreaterThan(origPrice - (origPrice * 0.05));

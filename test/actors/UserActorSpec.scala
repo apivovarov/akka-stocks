@@ -33,7 +33,7 @@ class UserActorSpec extends TestkitExample with SpecificationLike with JsonMatch
     "send a stock when receiving a StockUpdate message" in new WithApplication {
       val out = new StubOut()
 
-      val userActorRef = TestActorRef[UserActor](Props(new UserActor(out)))
+      val userActorRef = TestActorRef[OldUserActor](Props(new OldUserActor(out)))
       val userActor = userActorRef.underlyingActor
 
       // send off the stock update...
@@ -49,7 +49,7 @@ class UserActorSpec extends TestkitExample with SpecificationLike with JsonMatch
     "send the stock history when receiving a StockHistory message" in new WithApplication {
       val out = new StubOut()
 
-      val userActorRef = TestActorRef[UserActor](Props(new UserActor(out)))
+      val userActorRef = TestActorRef[OldUserActor](Props(new OldUserActor(out)))
       val userActor = userActorRef.underlyingActor
 
       // send off the stock update...

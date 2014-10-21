@@ -9,7 +9,7 @@ import org.specs2.time.NoTimeConversions
 import scala.concurrent.duration._
 import scala.collection.immutable.HashSet
 
-import utils.StockQuote
+import utils.OldStockQuote
 
 class StockActorSpec extends TestkitExample with SpecificationLike with NoTimeConversions {
 
@@ -24,7 +24,7 @@ class StockActorSpec extends TestkitExample with SpecificationLike with NoTimeCo
 
   final class StockActorWithStockQuote(symbol: String, price: Double, watcher: ActorRef) extends StockActor(symbol) {
     watchers = HashSet[ActorRef](watcher)
-    override lazy val stockQuote = new StockQuote {
+    override lazy val stockQuote = new OldStockQuote {
       def newPrice(lastPrice: java.lang.Double): java.lang.Double = price
     }
   }

@@ -1,5 +1,5 @@
 $ ->
-  ws = new WebSocket $("body").data("ws-url")
+  ws = new WebSocket("ws://localhost:9000/ws")
   ws.onmessage = (event) ->
     message = JSON.parse event.data
     switch message.type
