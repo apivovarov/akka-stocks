@@ -8,6 +8,8 @@ import scala.concurrent.Future
 import play.api.libs.json.{Json, JsValue}
 import play.api.Play
 import play.api.libs.json.JsString
+import actors.Settings
+import play.libs.Akka
 
 object StockSentiment extends Controller {
 
@@ -16,7 +18,7 @@ object StockSentiment extends Controller {
   implicit val tweetReads = Json.reads[Tweet]
   
   def getTextSentiment(text: String): Future[WSResponse] =
-    WS.url(Play.current.configuration.getString("sentiment.url").get) post Map("text" -> Seq(text))
+    WS.url(Settings(Akka.system).sentimentUrl) post Map("text" -> Seq(text))
 
   def getAverageSentiment(responses: Seq[WSResponse], label: String): Double = responses.map { response =>
     (response.json \\ label).head.as[Double]
@@ -26,9 +28,10 @@ object StockSentiment extends Controller {
     (json \ "statuses").as[Seq[Tweet]] map (tweet => getTextSentiment(tweet.text))
 
   def getTweets(symbol:String): Future[WSResponse] = {
-    WS.url(Play.current.configuration.getString("tweet.url").get.format(symbol)).get.withFilter { response =>
-      response.status == OK
-    }
+      val symbolTweetUrl = Settings(Akka.system).defaultTweetUrl.format(symbol)
+      WS.url(symbolTweetUrl).get.withFilter { response =>
+        response.status == OK
+      }
   }
 
   
