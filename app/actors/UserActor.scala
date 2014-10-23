@@ -9,7 +9,6 @@ import play.api.libs.json.JsNumber
 import actors.StockManagerActor.StockHistory
 
 import scala.collection.JavaConverters._
-import play.api.libs.json.Json.JsValueWrapper
 
 /** The out actor is wired in by Play Framework when this Actor is created.
   * When a message is sent to out the Play Framework then sends it to the client WebSocket.
@@ -17,10 +16,12 @@ import play.api.libs.json.Json.JsValueWrapper
   * */
 class UserActor(out: ActorRef) extends Actor with ActorLogging {
 
+    val stockManagerActor = ActorManager(context.system).stockManagerActor
+
     // watch the default stocks
     val defaultStocks = Play.application.configuration.getStringList("default.stocks")
     for (stockSymbol <- defaultStocks.asScala) {
-        StockManagerActor.stocksActor ! StockManagerActor.WatchStock(stockSymbol)
+        stockManagerActor ! StockManagerActor.WatchStock(stockSymbol)
     }
 
     def receive = {
@@ -45,13 +46,13 @@ class UserActor(out: ActorRef) extends Actor with ActorLogging {
         case message: JsValue =>
             (message \ "symbol").asOpt[String] match {
                 case Some(symbol) =>
-                    StockManagerActor.stocksActor ! StockManagerActor.WatchStock(symbol)
+                    stockManagerActor ! StockManagerActor.WatchStock(symbol)
                 case None => log.error("symbol was not found in json: $message")
             }
     }
 
     override def postStop() {
-        StockManagerActor.stocksActor ! StockManagerActor.UnwatchStock(None)
+        stockManagerActor ! StockManagerActor.UnwatchStock(None)
     }
 }
 

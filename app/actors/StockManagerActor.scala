@@ -1,7 +1,6 @@
 package actors
 
-import akka.actor.{ActorRef, Props, Actor}
-import play.libs.Akka
+import akka.actor.{Props, Actor}
 import actors.StockManagerActor._
 
 class StockManagerActor extends Actor {
@@ -9,7 +8,7 @@ class StockManagerActor extends Actor {
         case watchStock @ WatchStock(symbol) =>
             // get or create the StockActor for the symbol and forward this message
             context.child(symbol).getOrElse {
-                context.actorOf(Props(new StockActor(symbol)), symbol)
+                context.actorOf(StockActor.props(symbol), symbol)
             } forward watchStock
         case unwatchStock @ UnwatchStock(Some(symbol)) =>
             // if there is a StockActor for the symbol forward this message
@@ -21,7 +20,9 @@ class StockManagerActor extends Actor {
 }
 
 object StockManagerActor {
-    lazy val stocksActor: ActorRef = Akka.system.actorOf(Props(classOf[StockManagerActor]))
+
+    def props(): Props =
+        Props(new StockManagerActor())
 
     case class WatchStock(symbol: String)
 

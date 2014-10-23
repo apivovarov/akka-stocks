@@ -1,6 +1,6 @@
 package actors
 
-import akka.actor.{ActorRef, Actor}
+import akka.actor.{Props, ActorRef, Actor}
 import utils.FakeStockQuote
 import scala.collection.immutable.{HashSet, Queue}
 import scala.concurrent.duration._
@@ -51,6 +51,9 @@ class StockActor(symbol: String) extends Actor {
 }
 
 object StockActor {
+
+    def props(symbol: String): Props =
+        Props(new StockActor(symbol))
 
     case object FetchLatest
 
