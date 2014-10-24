@@ -1,11 +1,12 @@
 package actors
 
-import akka.actor.{Props, Actor}
+import akka.actor.{ActorLogging, Props, Actor}
 import actors.StockManagerActor._
 
-class StockManagerActor extends Actor {
+class StockManagerActor extends Actor with ActorLogging {
     def receive = {
         case watchStock @ WatchStock(symbol) =>
+            log.info(s"###StockManagerActor watching stock $symbol")
             // get or create the StockActor for the symbol and forward this message
             context.child(symbol).getOrElse {
                 context.actorOf(StockActor.props(symbol), symbol)
