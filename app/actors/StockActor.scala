@@ -8,6 +8,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import actors.StockManagerActor._
 import actors.StockActor.FetchLatest
 import scala.util.Random
+import java.io.Serializable
+import scala.Serializable
 
 /**
  * There is one StockActor per stock symbol.  The StockActor maintains a list of users watching the stock and the stock
@@ -15,6 +17,10 @@ import scala.util.Random
  */
 
 class StockActor(symbol: String) extends Actor {
+
+    def persistenceId: String = {
+        return "symbol_" + symbol
+    }
 
     protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
 
@@ -56,6 +62,18 @@ object StockActor {
         Props(new StockActor(symbol))
 
     case object FetchLatest
+
+    case class EventStockPriceUpdated(price:Double)
+
+    case class EventWatcherAdded(watcher:ActorRef)
+
+    case class EventWatcherRemover(watcher:ActorRef)
+
+    case class TakeSnapshot(stockHistory: Queue[Double], watchers: HashSet[ActorRef])
+
+    case class AddWatcherAfterRecover(watcher:ActorRef)
+
+    case object Snap
 
 
 }
