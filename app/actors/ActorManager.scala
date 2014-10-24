@@ -1,7 +1,6 @@
 package actors
 
 import akka.actor.{ExtendedActorSystem, Extension, ExtensionKey}
-import scala.concurrent.duration.{MILLISECONDS => Millis}
 import backend.SentimentActor
 
 object ActorManager extends ExtensionKey[ActorManager]
