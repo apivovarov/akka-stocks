@@ -21,11 +21,7 @@ class SentimentActor extends Actor with ActorLogging {
                 tweets <- getTweets(symbol) // get tweets that contain the stock symbol
                 futureSentiments = loadSentimentFromTweets(tweets.json) // queue web requests each tweets' sentiments
                 sentiments <- Future.sequence(futureSentiments) // when the sentiment responses arrive, set them
-            } yield {
-                var json = sentimentJson(sentiments)
-                log.info(s"sentiment json = $json}")
-                json
-            }
+            } yield sentimentJson(sentiments)
             futureStockSentiments.pipeTo(origSender)
         }
     }
