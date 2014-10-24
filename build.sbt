@@ -22,6 +22,6 @@ libraryDependencies ++= Seq(
     "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
 )
 
-addCommandAlias("rb", "runMain backend.MainClusterManager -Dakka.remote.netty.tcp.port=2555 -Dakka.cluster.roles.0=backend")
+addCommandAlias("rb", "runMain backend.MainClusterManager -Dakka.remote.netty.tcp.port=2555 -Dakka.cluster.roles.0=backend -Dakka.cluster.roles.1=sentiment")
 
 addCommandAlias("sj", "runMain backend.journal.SharedJournalApp -Dakka.remote.netty.tcp.port=2560 -Dakka.cluster.roles.0=shared-journal")

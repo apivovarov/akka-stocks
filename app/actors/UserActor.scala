@@ -16,12 +16,12 @@ import scala.collection.JavaConverters._
   * */
 class UserActor(out: ActorRef) extends Actor with ActorLogging {
 
-    val stockManagerActor = ActorManager(context.system).stockManagerActor
+    val stockManagerProxy = ActorManager(context.system).stockManagerProxy
 
     // watch the default stocks
     val defaultStocks = Play.application.configuration.getStringList("default.stocks")
     for (stockSymbol <- defaultStocks.asScala) {
-        stockManagerActor ! StockManagerActor.WatchStock(stockSymbol)
+        stockManagerProxy ! StockManagerActor.WatchStock(stockSymbol)
     }
 
     def receive = {
@@ -46,13 +46,13 @@ class UserActor(out: ActorRef) extends Actor with ActorLogging {
         case message: JsValue =>
             (message \ "symbol").asOpt[String] match {
                 case Some(symbol) =>
-                    stockManagerActor ! StockManagerActor.WatchStock(symbol)
+                    stockManagerProxy ! StockManagerActor.WatchStock(symbol)
                 case None => log.error("symbol was not found in json: $message")
             }
     }
 
     override def postStop() {
-        stockManagerActor ! StockManagerActor.UnwatchStock(None)
+        stockManagerProxy ! StockManagerActor.UnwatchStock(None)
     }
 }
 
