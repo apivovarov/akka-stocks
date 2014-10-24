@@ -10,7 +10,7 @@ object WSUtils {
         WSClient.url(url)
     }
 
-    val WSClient = {
+    private val WSClient = {
         val builder: NingAsyncHttpClientConfigBuilder = new NingAsyncHttpClientConfigBuilder(new DefaultWSClientConfig, new AsyncHttpClientConfig.Builder)
         val httpClientConfig: AsyncHttpClientConfig = builder.build
         new NingWSClient(httpClientConfig)
