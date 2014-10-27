@@ -1,7 +1,8 @@
 package actors
 
-import akka.actor.{Props, Actor}
+import akka.actor.{ActorRef, Props, Actor}
 import actors.StockManagerActor._
+import play.libs.Akka
 
 class StockManagerActor extends Actor {
     def receive = {
@@ -20,6 +21,8 @@ class StockManagerActor extends Actor {
 }
 
 object StockManagerActor {
+
+    lazy val stockManagerActor: ActorRef = Akka.system.actorOf(Props(classOf[StockManagerActor]))
 
     def props(): Props =
         Props(new StockManagerActor())
