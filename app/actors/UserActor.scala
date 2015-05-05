@@ -14,9 +14,9 @@ import scala.collection.JavaConverters._
   * When a message is sent to out the Play Framework then sends it to the client WebSocket.
   *
   * */
-class UserActor(out: ActorRef) extends Actor with ActorLogging {
+class UserActor(out: ActorRef) extends Actor with ActorLogging with ActorManagerActor {
 
-    val stockManagerActor = StockManagerActor.stockManagerActor
+    val stockManagerActor = actorManager.stockManagerActor
 
     // watch the default stocks
     val defaultStocks = Play.application.configuration.getStringList("default.stocks")
